@@ -1,0 +1,25 @@
+import numpy as np
+
+def softmax(x):
+    xt = np.exp(x - np.max(x))
+    return xt / np.sum(xt)
+
+def save_model_parameters_theano(outfile, model):
+    U, V, W1, W12, W2 = model.U.get_value(), model.V.get_value(), model.W1.get_value(), model.W12.get_value(), model.W2.get_value()
+    np.savez(outfile, U=U, V=V, W1=W1, W12=W12, W2=W2)
+    print "Saved model parameters to %s." % outfile
+   
+def load_model_parameters_theano(path, model):
+    npzfile = np.load(path)
+    U, V, W = npzfile["U"], npzfile["V"], npzfile["W"]
+    print U.shape
+    print V.shape
+    print W.shape
+    model.hidden_dim = U.shape[0]
+    model.word_dim = U.shape[1]
+    model.U.set_value(U)
+    model.V.set_value(V)
+    model.W.set_value(W)
+    print "Loaded model parameters from %s. hidden_dim=%d word_dim=%d" % (path, U.shape[0], U.shape[1])
+    return model
+    
